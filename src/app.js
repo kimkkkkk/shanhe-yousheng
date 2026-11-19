@@ -31,6 +31,7 @@ import {
 } from './logic/image.js';
 import { SpeechPlayer } from './logic/speech.js';
 import { PhotoEditor } from './ui/editor.js';
+import { PostcardStudio } from './ui/postcard.js';
 
 /* ------------------------------------------------------------------ */
 /* constants                                                          */
@@ -39,7 +40,7 @@ import { PhotoEditor } from './ui/editor.js';
 const HISTORY_KEY = 'shanhe.history.v1';
 const SETTINGS_KEY = 'shanhe.settings.v1';
 const MAX_HISTORY = 6;
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.1.0';
 
 const DEFAULT_SETTINGS = {
   dialect: 'sichuan',
@@ -381,13 +382,14 @@ function renderHome() {
         <p class="hero-lede">
           上传一张照片，听见<strong>普通话与家乡话</strong>里的山河；
           定位此刻，读一读<strong>此地的旧事</strong>；
-          再修成一张好图，配一段刚好的朋友圈文案。
+          再修成一张好图，或做成一张<strong>水墨明信片</strong>。
         </p>
         <div class="hero-chips" aria-label="能力">
           <span class="hero-chip">${icon('sparkle')} 看见山川湖海</span>
           <span class="hero-chip">${icon('volume')} 双语解说</span>
           <span class="hero-chip">${icon('pin')} 地方志故事</span>
           <span class="hero-chip">${icon('edit')} 修图出片</span>
+          <span class="hero-chip">${icon('postcard')} 水墨明信片</span>
         </div>
       </div>
       <div class="hero-visual" aria-hidden="true">
@@ -480,8 +482,8 @@ function renderHome() {
         </article>
         <article class="feature-card">
           <div class="feature-top"><span class="feature-icon ink">${icon('edit')}</span><span class="feature-index">04</span></div>
-          <h3>修图与文案</h3>
-          <p>滤镜、裁剪、题字一键出片，再配一段刚好适合朋友圈的话。</p>
+          <h3>修图与明信片</h3>
+          <p>滤镜、裁剪、题字一键出片；也可以把照片变成一张本地绘制的水墨明信片。</p>
         </article>
       </div>
     </section>
@@ -655,6 +657,7 @@ function renderResult() {
               <span class="photo-badge">${icon('sparkle')} ${esc(scene.name)}<span class="conf">${confidence}%</span></span>
               <div class="photo-tools">
                 <button class="photo-tool" type="button" data-action="download-photo" aria-label="保存原图">${icon('download')}</button>
+                <button class="photo-tool" type="button" data-action="open-postcard" aria-label="制作水墨明信片">${icon('postcard')}</button>
                 <button class="photo-tool" type="button" data-action="open-editor" aria-label="修图">${icon('edit')}</button>
               </div>
             </div>
@@ -684,6 +687,15 @@ function renderResult() {
               ${(scene.keywords || []).slice(0, 4).map((keyword) => `<span>${esc(keyword)}</span>`).join('')}
             </div>
           </div>
+          <button class="postcard-ribbon" type="button" data-action="open-postcard">
+            <span class="ribbon-icon">${icon('postcard')}</span>
+            <span class="ribbon-copy">
+              <small>INK POSTCARD · 2160 × 3240</small>
+              <strong>把此刻，寄成一张水墨明信片</strong>
+              <em>上版实景，下版本地水墨 · 可编辑英文题字</em>
+            </span>
+            <span class="ribbon-arrow">${icon('chevron')}</span>
+          </button>
           <div class="visual-actions">
             <button class="btn btn-ghost btn-sm" type="button" data-action="open-scene-picker">${icon('refresh')} 调整场景</button>
             <button class="btn btn-ghost btn-sm" type="button" data-action="open-place-picker">${icon('pin')} ${state.place ? '换一个地点' : '手动选点'}</button>
@@ -1520,6 +1532,23 @@ async function openEditor() {
   await editor.open();
 }
 
+async function openPostcard() {
+  if (!state.image || !state.analysis) return;
+  stopSpeech();
+  const studio = new PostcardStudio({
+    src: state.image.src,
+    scene: state.analysis.scene,
+    analysis: state.analysis,
+    placeName: activePlace().name,
+    toast,
+    onClose: () => {
+      state.postcardOpen = false;
+    }
+  });
+  state.postcardOpen = true;
+  await studio.open();
+}
+
 async function downloadPhoto() {
   if (!state.image) return;
   try {
@@ -1823,6 +1852,9 @@ function onAction(event) {
       break;
     case 'open-editor':
       openEditor();
+      break;
+    case 'open-postcard':
+      openPostcard();
       break;
     case 'download-photo':
       downloadPhoto();

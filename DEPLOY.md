@@ -8,8 +8,8 @@
 
 | 路径 | 用途 |
 | --- | --- |
-| `dist/` | 可直接上传的站点根目录，31 个文件，约 484 KB |
-| `shanhe-yousheng-https.zip` | 约 251 KB；与 `dist/` 内容一致，已把 `index.html` 放在压缩包根目录，可直接拖到 Netlify Drop |
+| `dist/` | 可直接上传的站点根目录，34 个文件，约 551 KB |
+| `shanhe-yousheng-https.zip` | 约 269 KB；与 `dist/` 内容一致，已把 `index.html` 放在压缩包根目录，可直接拖到 Netlify Drop |
 | `SHA256SUMS.txt` | ZIP 的 SHA-256 校验值 |
 | `netlify.toml` | Netlify 构建配置 |
 | `vercel.json` | Vercel 构建与安全头配置 |
@@ -192,7 +192,7 @@ npm test            # 33 个单元测试
 
 本次交付的构建已经通过：
 
-- `npm run build`：31 个文件，484 KB；
+- `npm run build`：34 个文件，551 KB；
 - `npm run check:dist`：43 项检查全部通过；
 - 无头 Chrome 完整流程：移动端布局、上传、定位、双语音解、选点、修图导出、朋友圈、足迹、离线 Service Worker 全部通过；
 - 生产 `dist/` 在带 CSP 的服务器上验证，无运行时异常。
