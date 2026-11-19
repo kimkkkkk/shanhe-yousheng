@@ -15,6 +15,7 @@ import { PRODUCTION_HEADERS } from '../config/security.mjs';
 
 const ROOT = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const DIST = join(ROOT, 'dist');
+const BASE_PATH = normalizeBase(process.env.BASE_PATH || '/');
 const APP_VERSION = JSON.parse(await readFile(join(ROOT, 'package.json'), 'utf8')).version;
 const REQUIRED = [
   'index.html',
@@ -48,6 +49,8 @@ for (const dir of ['src', 'assets', 'icons']) {
   await cp(join(ROOT, dir), join(DIST, dir), { recursive: true });
 }
 
+await applyBasePathToDist();
+
 // 平台安全头：Netlify / Cloudflare Pages 原生识别 _headers。
 const cacheSections = [
   { path: '/index.html', cache: 'no-cache' },
@@ -76,6 +79,56 @@ await writeFile(
   'User-agent: *\nAllow: /\n\n# 山河有声：照片只在本机处理，不上传服务器。\n',
   'utf8'
 );
+
+function normalizeBase(value) {
+  let base = String(value || '/').trim();
+  if (!base.startsWith('/')) base = `/${base}`;
+  if (!base.endsWith('/')) base += '/';
+  return base.replace(/\/{2,}/g, '/');
+}
+
+function withBase(path) {
+  if (!path || !path.startsWith('/') || path.startsWith('//')) return path;
+  return `${BASE_PATH}${path.slice(1)}`;
+}
+
+/** GitHub Pages 项目页要部署在 /repo/ 下，构建时把根路径资源统一改写成该前缀。 */
+async function applyBasePathToDist() {
+  if (BASE_PATH === '/') return;
+
+  const htmlPath = join(DIST, 'index.html');
+  const html = await readFile(htmlPath, 'utf8');
+  await writeFile(
+    htmlPath,
+    html.replace(/(href|src)="\/(?!\/)/g, `$1="${BASE_PATH}`),
+    'utf8'
+  );
+
+  const appPath = join(DIST, 'src', 'app.js');
+  let app = await readFile(appPath, 'utf8');
+  app = app.replace(/(['"])\/assets\//g, `$1${BASE_PATH}assets/`);
+  app = app.replace(/(['"])\/sw\.js\1/g, `$1${BASE_PATH}sw.js$1`);
+  await writeFile(appPath, app, 'utf8');
+
+  const manifestPath = join(DIST, 'manifest.webmanifest');
+  const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
+  manifest.start_url = withBase(manifest.start_url || '/');
+  manifest.scope = withBase(manifest.scope || '/');
+  for (const icon of manifest.icons || []) icon.src = withBase(icon.src);
+  for (const shortcut of manifest.shortcuts || []) shortcut.url = withBase(shortcut.url);
+  await writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, 'utf8');
+
+  const swPath = join(DIST, 'sw.js');
+  let sw = await readFile(swPath, 'utf8');
+  sw = sw.replace(/(['"])\/(?!\/)/g, (full, quote) => `${quote}${BASE_PATH}`);
+  await writeFile(swPath, sw, 'utf8');
+}
+
+function distRelative(path) {
+  if (path === BASE_PATH) return '';
+  if (path.startsWith(BASE_PATH)) return path.slice(BASE_PATH.length);
+  return path.replace(/^\//, '');
+}
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -112,8 +165,8 @@ const coreMatch = /const CORE = \[([\s\S]*?)\];/.exec(builtSw);
 if (!coreMatch) throw new Error('sw.js 中找不到 CORE 预缓存清单');
 const corePaths = [...coreMatch[1].matchAll(/'([^']+)'/g)].map((match) => match[1]);
 for (const path of corePaths) {
-  if (path === '/') continue;
-  const target = join(DIST, path.replace(/^\//, ''));
+  if (path === BASE_PATH || path === '/') continue;
+  const target = join(DIST, distRelative(path));
   try {
     await stat(target);
   } catch {
@@ -133,9 +186,9 @@ for (const file of REQUIRED) {
 const html = await readFile(join(DIST, 'index.html'), 'utf8');
 const refs = [...html.matchAll(/(?:src|href)="(\/[^"#?]+)"/g)].map((match) => match[1]);
 for (const ref of refs) {
-  if (ref === '/') continue;
+  if (ref === BASE_PATH || ref === '/') continue;
   try {
-    await stat(join(DIST, ref.replace(/^\//, '')));
+    await stat(join(DIST, distRelative(ref)));
   } catch {
     throw new Error(`index.html 引用了不存在的资源: ${ref}`);
   }
@@ -143,7 +196,7 @@ for (const ref of refs) {
 const manifest = JSON.parse(await readFile(join(DIST, 'manifest.webmanifest'), 'utf8'));
 for (const icon of manifest.icons || []) {
   try {
-    await stat(join(DIST, String(icon.src).replace(/^\//, '')));
+    await stat(join(DIST, distRelative(String(icon.src))));
   } catch {
     throw new Error(`manifest 图标不存在: ${icon.src}`);
   }
@@ -157,8 +210,8 @@ const infoBase = {
   version: APP_VERSION,
   buildId,
   builtAt: new Date().toISOString(),
-  deployment: 'static HTTPS (root path)',
-  basePath: '/',
+  deployment: `static HTTPS (${BASE_PATH})`,
+  basePath: BASE_PATH,
   runtime: 'offline-first PWA',
   requiresNode: false
 };
@@ -175,6 +228,7 @@ console.log(`  build     ${buildId}`);
 console.log(`  files     ${allFiles.length + 1}`);
 console.log(`  size      ${formatBytes(metadataBytes)}`);
 console.log(`  output    ${DIST}`);
+console.log(`  base      ${BASE_PATH}`);
 console.log(`  cache     ${corePaths.length} core entries verified`);
 console.log('\n  dist/ 可直接上传到 Netlify / Cloudflare Pages / Vercel，或使用 deploy/Caddyfile 自托管。\n');
 
