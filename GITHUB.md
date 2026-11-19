@@ -9,25 +9,29 @@
 
 - 项目目录：`D:\vibe coding\项目\山河有声`
 - 本地分支：`main`
-- 本地提交：已包含完整项目（首次导入）
+- 本地提交：v1.1.0，含本地水墨明信片工作室
 - 远程仓库：`origin` → `https://github.com/kimkkkkk/shanhe-yousheng.git`（已配置）
-- 当前只差最后一步：把本地 `main` push 到 GitHub
+- 上传状态：本地与远程 `main` 已同步
+- 最近功能：水墨明信片（本地 Canvas 渲染，2160×3240 PNG）
 - 已忽略：`dist/`、`shots/`、`*.zip`、`node_modules/`、`.env`
 
 ---
 
-## 一、完成上传
+## 一、以后如何同步更新
 
-### 方式 A：PowerShell（一条命令）
+### 方式 A：PowerShell（日常同步）
 
-打开 PowerShell，执行：
+每次修改前先拉取，修改后提交并推送：
 
 ```powershell
 $git = "D:\vibe coding\git\Git\cmd\git.exe"
 Set-Location "D:\vibe coding\项目\山河有声"
 
+& $git pull --rebase
 & $git status
-& $git push -u origin main
+& $git add -A
+& $git commit -m "feat: describe your change"
+& $git push
 ```
 
 看到类似下面的输出就表示上传成功：
