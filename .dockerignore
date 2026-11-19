@@ -1,0 +1,12 @@
+.git
+.gitignore
+node_modules
+dist
+shots
+tests
+exp2
+*.zip
+*.log
+README.md
+DEPLOY.md
+start.cmd

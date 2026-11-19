@@ -1,0 +1,8 @@
+name = "shanhe-yousheng"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-01-01"
+
+# Cloudflare Pages:
+#   Build command:  node scripts/build.mjs
+#   Output dir:     dist
+#   dist/_headers  会由 Pages 自动应用安全头与缓存策略。

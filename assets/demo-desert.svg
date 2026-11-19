@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7f93a4"/>
+      <stop offset="0.35" stop-color="#d8b18e"/>
+      <stop offset="0.68" stop-color="#efc68e"/>
+      <stop offset="1" stop-color="#e6b57a"/>
+    </linearGradient>
+    <linearGradient id="dune1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3bd83"/>
+      <stop offset="1" stop-color="#c18f55"/>
+    </linearGradient>
+    <linearGradient id="dune2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d3a263"/>
+      <stop offset="1" stop-color="#92602f"/>
+    </linearGradient>
+    <linearGradient id="dune3" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b78048"/>
+      <stop offset="1" stop-color="#68401f"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#fff1cf"/>
+      <stop offset="0.55" stop-color="#f5bf80" stop-opacity="0.92"/>
+      <stop offset="1" stop-color="#e9a263" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft"><feGaussianBlur stdDeviation="4"/></filter>
+  </defs>
+  <rect width="1200" height="900" fill="url(#sky)"/>
+  <circle cx="580" cy="350" r="170" fill="url(#sun)"/>
+  <circle cx="580" cy="350" r="48" fill="#f9d79b" opacity="0.8"/>
+  <g filter="url(#soft)" opacity="0.4" fill="#f7e0b6">
+    <ellipse cx="220" cy="220" rx="210" ry="18"/>
+    <ellipse cx="880" cy="180" rx="160" ry="14"/>
+  </g>
+  <path d="M0 520 Q160 470 320 512 Q480 552 640 506 Q800 462 960 510 Q1080 544 1200 510 L1200 610 L0 610Z" fill="#c69b6b" opacity="0.55"/>
+  <path d="M0 620 Q180 520 380 606 Q540 676 700 596 Q860 518 1020 590 Q1120 632 1200 598 L1200 900 L0 900Z" fill="url(#dune1)"/>
+  <path d="M0 716 Q170 610 360 702 Q540 788 720 692 Q900 598 1080 690 Q1140 722 1200 700 L1200 900 L0 900Z" fill="url(#dune2)"/>
+  <path d="M0 812 Q200 716 400 800 Q600 884 800 792 Q980 710 1200 804 L1200 900 L0 900Z" fill="url(#dune3)"/>
+  <g fill="none" stroke="#f3d6a5" stroke-width="2" opacity="0.42">
+    <path d="M80 690 Q260 622 440 686"/>
+    <path d="M560 760 Q740 686 920 752"/>
+    <path d="M180 846 Q400 768 620 846"/>
+    <path d="M760 626 Q900 574 1040 624"/>
+  </g>
+  <g fill="#3a2a1d" opacity="0.9">
+    <path d="M790 568 q7 -48 14 0 q9 44 18 54 l-52 0 q8 -14 20 -54Z"/>
+    <path d="M806 560 q6 -36 12 0 q8 34 14 44 l-38 0 q6 -12 12 -44Z" opacity="0.7"/>
+  </g>
+  <g stroke="#5d4329" stroke-width="5" stroke-linecap="round" opacity="0.8">
+    <path d="M790 582 q-18 -8 -30 -2"/>
+    <path d="M822 584 q18 -10 32 -2"/>
+  </g>
+  <g fill="#f7e2bb" opacity="0.8">
+    <path d="M300 616 q22 -12 44 0 q-22 8 -44 0Z"/>
+    <path d="M910 704 q18 -10 36 0 q-18 7 -36 0Z"/>
+  </g>
+</svg>

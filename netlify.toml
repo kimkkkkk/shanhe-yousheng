@@ -1,0 +1,9 @@
+[build]
+  command = "node scripts/build.mjs"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# 安全头、缓存策略写在 dist/_headers 中，由构建脚本统一生成。
+# Netlify 会自动为 *.netlify.app 域名签发 HTTPS 证书。

@@ -1,0 +1,17 @@
+{
+  "name": "shanhe-yousheng",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "山河有声 — 用一张风景照，听见此地的山河故事",
+  "scripts": {
+    "start": "node server.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node server.mjs --root dist --port 4174",
+    "check:dist": "node scripts/check-dist.mjs",
+    "test": "node --test --test-isolation=none \"tests/*.test.js\""
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
