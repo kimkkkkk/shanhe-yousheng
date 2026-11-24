@@ -13,6 +13,7 @@
 - 远程仓库：`origin` → `https://github.com/kimkkkkk/shanhe-yousheng.git`（已配置）
 - 上传状态：本地与远程 `main` 已同步
 - 最近功能：水墨明信片（本地 Canvas 渲染，2160×3240 PNG）
+- GitHub Pages：已配置工作流，需在 Settings → Pages 选择 GitHub Actions 后手动运行一次
 - 已忽略：`dist/`、`shots/`、`*.zip`、`node_modules/`、`.env`
 
 ---
@@ -229,3 +230,23 @@ npm run preview
 - `log`：本地提交有没有丢。
 
 更多部署细节见 [DEPLOY.md](DEPLOY.md)。
+
+
+---
+
+## GitHub Pages 公开链接
+
+公开地址：
+
+```text
+https://kimkkkkk.github.io/shanhe-yousheng/
+```
+
+首次使用时，先在仓库设置里启用 Pages：
+
+1. 打开 `https://github.com/kimkkkkk/shanhe-yousheng/settings/pages`
+2. **Build and deployment → Source** 选择 **GitHub Actions**
+3. 打开 `https://github.com/kimkkkkk/shanhe-yousheng/actions/workflows/pages.yml`
+4. 点击 **Run workflow / 运行工作流**
+
+工作流会自动按 `/shanhe-yousheng/` 子路径构建并发布。之后每次 `push` 只需要在 Actions 页面手动运行，或把 `pages.yml` 的 `push` 触发器重新打开。
